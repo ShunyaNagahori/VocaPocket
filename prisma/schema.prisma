@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// 品詞の列挙型
+enum PartOfSpeech {
+  noun
+  verb
+  adjective
+  adverb
+  pronoun
+  preposition
+  conjunction
+  interjection
+  determiner
+  phrase
+}
+
+// ジャンルの列挙型
+enum Genre {
+  word
+  phrase
+  grammar
+}
+
+// // 単語の変化形
+// model WordVariation {
+//   id              String  @id @default(cuid())
+//   word            Word    @relation(fields: [wordId], references: [id])
+//   wordId          String
+//   plural          String?
+//   comparative     String?
+//   superlative    String?
+//   pastTense      String?
+//   pastParticiple String?
+//   presentParticiple String?
+// }
+
+// 例文
+model ExampleSentence {
+  id          String     @id @default(cuid())
+  text        String
+  translation String?
+  vocabulary  Vocabulary @relation(fields: [vocabularyId], references: [id])
+  vocabularyId String
+}
+
+// タグ
+model Tag {
+  id         String       @id @default(cuid())
+  name       String       @unique
+  vocabulary Vocabulary[]
+}
+
+// 語彙（単語・フレーズ・文法）
+model Vocabulary {
+  id                String       @id @default(cuid())
+  content           String
+  genre             Genre        @default(word)
+  meaning           String
+  partOfSpeech      PartOfSpeech?
+  notes             String?
+  lastReviewed      DateTime?
+  userId            String
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  // 名詞の変化形
+  plural            String?      // 複数形
+  // 動詞の変化形
+  pastTense         String?      // 過去形
+  pastParticiple    String?      // 過去分詞
+  presentParticiple String?      // 現在分詞
+  presentTense      String?      // 現在形
+  thirdPersonSingular String?    // 三人称単数現在
+  // 形容詞・副詞の変化形
+  comparative       String?      // 比較級
+  superlative       String?      // 最上級
+  // 代名詞の変化形
+  possessive        String?      // 所有格
+  objective         String?      // 目的格
+  reflexive         String?      // 再帰代名詞
+  // その他
+  user              User         @relation(fields: [userId], references: [id])
+  tags              Tag[]
+  examples          ExampleSentence[]
+}
+
+model User {
+  id         String       @id
+  email      String       @unique
+  name       String?
+  vocabulary Vocabulary[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now()) @updatedAt
+}
