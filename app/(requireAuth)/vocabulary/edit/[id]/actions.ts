@@ -33,7 +33,7 @@ type VocabularyFormData = {
   tags: {id: string | null, name: string}[];
 };
 
-export async function updateVocabulary(formData: VocabularyFormData) {
+export async function updateVocabulary(formData: VocabularyFormData): Promise<{ success: boolean }> {
   try {
     const { user } = await getSession();
 
@@ -50,12 +50,8 @@ export async function updateVocabulary(formData: VocabularyFormData) {
     });
 
     if (!existingVocabulary) {
-      return {
-        success: false,
-        error: "ボキャブラリーが見つかりません。",
-      };
+      throw new Error("ボキャブラリーが見つかりません。");
     }
-
 
     const existingTagIds = existingVocabulary.tags.map(tag => tag.id);
     // 削除すべきタグ（既存のタグIDのうち、フォームから送られてこなかったもの）
@@ -80,7 +76,7 @@ export async function updateVocabulary(formData: VocabularyFormData) {
 
 
     // ボキャブラリーを更新
-    const updatedVocabulary = await prisma.vocabulary.update({
+    await prisma.vocabulary.update({
       where: {
         id: formData.id,
         userId: user.id,
@@ -185,10 +181,6 @@ export async function updateVocabulary(formData: VocabularyFormData) {
       success: true,
     };
   } catch (error) {
-    console.error("ボキャブラリー更新エラー:", error);
-    return {
-      success: false,
-      error: "ボキャブラリーの更新中にエラーが発生しました。",
-    };
+    throw error;
   }
 }

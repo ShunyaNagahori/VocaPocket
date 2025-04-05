@@ -158,7 +158,6 @@ export default function EditForm({ vocabulary }: EditFormProps) {
   const onSubmit = async (data: z.infer<typeof schema>) => {
     try {
       setIsSubmitting(true);
-      console.log(tags);
 
       const formattedExamples = examples
         .filter(ex => ex.text.trim() !== "")
@@ -168,8 +167,7 @@ export default function EditForm({ vocabulary }: EditFormProps) {
           translation: ex.translation
         }));
 
-      console.log(formattedExamples);
-      const result = await updateVocabulary({
+      await updateVocabulary({
         id: vocabulary.id,
         ...data,
         partOfSpeech: data.partOfSpeech === "none" || data.partOfSpeech === "" ? null : data.partOfSpeech,
@@ -177,27 +175,18 @@ export default function EditForm({ vocabulary }: EditFormProps) {
         tags: tags
       });
 
-      if (result.success) {
-        toast({
-          title: "成功！",
-          description: `"${data.content}"が更新されました。`,
-        });
+      toast({
+        title: "データ保存完了",
+        description: `"${data.content}"が更新されました。`,
+      });
 
-        // 詳細ページに戻る
-        router.push(`/vocabulary/${vocabulary.id}`);
-        router.refresh();
-      } else {
-        toast({
-          title: "エラー",
-          description: result.error || "更新中にエラーが発生しました。",
-          variant: "destructive",
-        });
-      }
+      // 詳細ページに戻る
+      router.push(`/vocabulary/${vocabulary.id}`);
+      router.refresh();
     } catch (error) {
-      console.error("更新エラー:", error);
       toast({
         title: "エラー",
-        description: "予期せぬエラーが発生しました。",
+        description: "更新に失敗しました。",
         variant: "destructive",
       });
     } finally {

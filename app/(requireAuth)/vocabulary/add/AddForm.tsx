@@ -148,29 +148,21 @@ export default function AddForm() {
         tags: tags
       });
 
-      if (result.success) {
-        toast({
-          title: "成功！",
-          description: `"${data.content}"がリストに追加されました。`,
-        });
+      toast({
+        title: "成功！",
+        description: `"${data.content}"がリストに追加されました。`,
+      });
 
-        // フォームをリセット
-        form.reset();
-        setExamples([{ id: uuidv4(), text: "", translation: "" }]);
-        setTags([]);
+      // フォームをリセット
+      form.reset();
+      setExamples([{ id: uuidv4(), text: "", translation: "" }]);
+      setTags([]);
 
-        // 一覧ページに戻る
-        router.push("/vocabulary");
-        router.refresh();
-      } else {
-        toast({
-          title: "エラー",
-          description: result.error || "登録中にエラーが発生しました。",
-          variant: "destructive",
-        });
-      }
+      // 一覧ページに戻る
+      router.push(`/vocabulary/${result.vocabulary.id}`);
+      router.refresh();
+
     } catch (error) {
-      console.error("登録エラー:", error);
       toast({
         title: "エラー",
         description: "予期せぬエラーが発生しました。",

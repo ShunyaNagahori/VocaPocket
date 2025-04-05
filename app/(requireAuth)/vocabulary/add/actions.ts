@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { revalidatePath } from "next/cache";
-import { PartOfSpeech } from "@prisma/client";
+import { PartOfSpeech, Vocabulary } from "@prisma/client";
 
 type Example = {
   text: string;
@@ -31,7 +31,7 @@ type VocabularyFormData = {
   tags: string[];
 };
 
-export async function addVocabulary(formData: VocabularyFormData) {
+export async function addVocabulary(formData: VocabularyFormData): Promise<{ success: boolean, vocabulary: Vocabulary }> {
   try {
     const { user } = await getSession();
 
@@ -91,7 +91,6 @@ export async function addVocabulary(formData: VocabularyFormData) {
 
     return { success: true, vocabulary };
   } catch (error) {
-    console.error('ボキャブラリー追加エラー:', error);
-    return { success: false, error: '登録中にエラーが発生しました。' };
+    throw error;
   }
 }
