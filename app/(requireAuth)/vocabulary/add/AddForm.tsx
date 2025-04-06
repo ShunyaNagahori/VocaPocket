@@ -149,7 +149,7 @@ export default function AddForm() {
       });
 
       toast({
-        title: "成功！",
+        title: "ボキャブラリー作成完了",
         description: `"${data.content}"がリストに追加されました。`,
       });
 

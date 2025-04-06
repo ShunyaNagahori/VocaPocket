@@ -53,7 +53,7 @@ model ExampleSentence {
   id          String     @id @default(cuid())
   text        String
   translation String?
-  vocabulary  Vocabulary @relation(fields: [vocabularyId], references: [id])
+  vocabulary  Vocabulary @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
   vocabularyId String
 }
 
@@ -92,7 +92,7 @@ model Vocabulary {
   objective         String?      // 目的格
   reflexive         String?      // 再帰代名詞
   // その他
-  user              User         @relation(fields: [userId], references: [id])
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   tags              Tag[]
   examples          ExampleSentence[]
 }
