@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from "@/hooks/use-toast";
 import { LogOut } from "lucide-react";
+import { updatePassword } from './actions';
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(1, "現在のパスワードを入力してください"),
@@ -35,19 +36,30 @@ const SecuritySetting = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof passwordSchema>) => {
-    setLoading(true);
+  const onSubmit = async (data: z.infer<typeof passwordSchema>) => {
+    try {
+      setLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      toast({
-        title: "パスワードを更新しました",
-        description: "パスワードが正常に変更されました",
+      await updatePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword
       });
-      setLoading(false);
+
+      toast({
+        title: "パスワード更新完了",
+        description: "パスワードが更新されました",
+      });
 
       form.reset();
-    }, 1000);
+    } catch (error) {
+      toast({
+        title: "エラー",
+        description: error instanceof Error ? error.message : "パスワードの更新に失敗しました。",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

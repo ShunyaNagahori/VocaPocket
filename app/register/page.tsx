@@ -79,7 +79,7 @@ export default function Register() {
         }
 
         toast({
-          title: "成功！",
+          title: "登録完了",
           description: "アカウントが作成されました。確認メールをご確認ください。",
         });
 

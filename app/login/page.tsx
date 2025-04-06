@@ -53,8 +53,7 @@ export default function Login() {
 
       if (authData.user) {
         toast({
-          title: "成功！",
-          description: "ログインしました",
+          title: "ログインしました"
         });
 
         await supabase.auth.getSession();
